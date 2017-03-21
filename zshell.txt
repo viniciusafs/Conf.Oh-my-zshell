@@ -1,0 +1,255 @@
+# .zshrc - Arquivo de inicialização do Z shell
+    # Sandro Marcell (sandro_marcell@yahoo.com.br)
+    # Boa Vista, Roraima - 10/06/2007
+    # Criado sob a versão 6.4.2 do zsh
+    # Mais detalhes: man zsh ou info zsh
+
+    # Setando idioma pt_BR:
+    export LC_ALL=pt_BR
+    export LC_MESSAGES=pt_BR
+    export LC_TYPE=C
+
+    # Caminhos para binários e manpages:
+    path=(
+        /{bin,sbin}
+        /usr/{bin,sbin}
+        /usr/X11R[0-9]/bin
+        /usr/local/bin
+    )
+
+    manpath=(
+        /usr/man
+        /usr/share/man
+        /usr/X11R[0-9]/man
+        /usr/local/man
+    )
+
+    # Histórico:
+    export HISTFILE=${HOME}/.zsh_history
+    export HISTSIZE=5000
+    export SAVEHIST=5000
+
+    # Opções para o histórico:
+    setopt EXTENDED_HISTORY HIST_VERIFY HIST_REDUCE_BLANKS HIST_IGNORE_ALL_DUPS
+    # Obs.: Caso queira procurar um comando específico no histórico,
+    # você pode utilizar como alternativa a combinação de teclas
+    # 'CTRL+R' e digitar o comando procurado.
+
+    # Limpando a tela do terminal usando a tecla <ESC>:
+    bindkey '^[' clear-screen
+    # Sem checagem de mensagens:
+    unset mailpath MAILCHECK
+    # Limitando número de processos:
+    limit maxproc 250
+    limit coredumpsize 0
+    # Editor padrão no zsh:
+    export FCEDIT='vim'
+    export VISUAL=$FCEDIT
+    export EDITOR=$FCEDIT
+
+    # Man pages coloridas:
+    if [ -e $(which most) ]
+    then
+       export PAGER='most -s'
+       export LESSHISTFILE='-'
+    else
+       export PAGER=less
+    fi
+
+    # Carregando alguns módulos úteis:
+    zmodload -i zsh/complete
+    zmodload -i zsh/mapfile
+    zmodload -i zsh/mathfunc
+    zmodload -i zsh/complist
+
+    # Ativando auto-correção:
+    setopt CORRECT
+    setopt CORRECT_ALL
+    export SPROMPT="$(print '%{\e[37m%}zsh: Corrigir para %S%r%s ? (n|y|e): %{\e[0m%}')"
+
+    # Permite o uso dos curingas: *?_-.[]~=/&;!#$%^(){}<>
+    setopt EXTENDED_GLOB
+
+    # Ativando auto cd (não há necessidade de uso do comando cd):
+    setopt AUTO_CD
+    setopt CDABLE_VARS
+    setopt AUTO_PUSHD
+    setopt PUSHD_IGNORE_DUPS
+    setopt PUSHD_SILENT
+
+    # Variáveis de ambiente para placa de vídeo nVidia GeForce FX5200:
+    #export __GL_FSAA_MODE=7
+    #export __GL_FORCE_GENERIC_CPU=0
+    #export __GL_LOG_MAX_ANISO=3
+    #export __GL_SYNC_TO_VBLANK=1
+
+    # Antialiasing para aplicações GTK/QT:
+    export GDK_USE_XFT=1
+    export QT_XFT=1
+
+    # ls colorido:
+    export ZLS_COLORS=$LS_COLORS
+    alias ls='ls -FX --format=across --color=auto'
+
+    # Ajustando teclas (sob o xterm):
+    bindkey '^[[H'  beginning-of-line   # <HOME>
+    bindkey '^[[F'  end-of-line         # <END>
+    bindkey '^[[3~' delete-char         # <DELETE>
+    bindkey '^[[2~' overwhite-mode      # <INSERT>
+    bindkey '^[[5~' up-line-or-search   # <PAGE UP>
+    bindkey '^[[6~' down-line-or-search # <PAGE DOWN>
+
+    # Prompt personalizado:
+    [[ $UID != 0 ]] && {
+    export PROMPT=\
+    "$(print '%B%{\e[33m%}%n%E > %{\e[31m%}%S[%~]%s%{\e[33m%} : %b')"
+    export RPROMPT="$(print '%B%{\e[36m%}%S%l%s%{\e[0m%}%b')"
+    export PROMPT2="$(print '%{\e[5;37m%}-> %{\e[0m%}')"
+    export PROMPT3="$(print '%{\e[5;37m%}-> %{\e[0m%}')"
+    export PROMPT4="$(print '%{\e[5;37m%}-> %{\e[0m%}')"
+    } || {
+    export PROMPT=\
+    "$(print '%B%S%{\e[31m%}%#%n > (%~)%s%{\e[33m%} : %b')"
+    export PROMPT2="$(print '%{\e[5;37m%}-> %{\e[0m%}')"
+    export PROMPT3="$(print '%{\e[5;37m%}-> %{\e[0m%}')"
+    export PROMPT4="$(print '%{\e[5;37m%}-> %{\e[0m%}')"
+    }
+
+    # Auto-completando com <TAB>
+    setopt AUTO_LIST
+    setopt AUTO_MENU
+    setopt CASE_GLOB
+    setopt LIST_TYPES
+    setopt GLOB_COMPLETE
+    setopt MENU_COMPLETE
+    setopt COMPLETE_IN_WORD
+    setopt COMPLETE_ALIASES
+    autoload -U compinit
+    compinit
+    # Ativando modo 'verbose':
+    zstyle ':completion:*' verbose 'yes'
+    zstyle ':completion:*' show-completer
+    # Lista colorida de complementações:
+    zstyle ':completion:*:default' list-colors ${(s.:.)ZLS_COLORS}
+    # Menu de seleção visual:
+    zstyle ':completion:*' menu select=3 _complete _ignored _approximate
+    zstyle ':completion:*' select-prompt '%S zsh: Seleção atual = %p %s'
+    # Auto descrição das complementações possíveis:
+    zstyle ':completion:*:options' description 'yes'
+    zstyle ':completion:*:options' auto-description '%d'
+    # Formato das mensagens de auto-complementação:
+    zstyle ':completion:*:corrections' format '%Bzsh: %d (erros: %e)%b'
+    zstyle ':completion:*:descriptions' format '%U%B%d%b%u'
+    zstyle ':completion:*:warnings' format '%Bzsh: Inválido como: %d%b'
+    # Listando auto-complementações em grupos:
+    zstyle ':completion:*:matches' groups 'yes'
+    zstyle ':completion:*' list-grouped
+    zstyle ':completion:*' group-name ''
+    zstyle ':completion:*:*:-command-:*' group-order commands builtins
+    # Expandir o máximo que puder:
+    zstyle ':completion:incremental:*' completer _complete _correct
+    zstyle ':completion:*' completer _complete _correct _match _approximate
+    zstyle ':completion:*:expand:*' tag-order all-expansions
+    # Número de erros a aceitar durante auto-complementação:
+    zstyle ':completion:*:approximate:*' max-errors 2 numeric
+    # Usar '/d/s <TAB>' para expandir para '/dir/subdir':
+    zstyle ':completion:*' expand 'yes'
+    zstyle ':completion:*' squeeze-slashes 'yes'
+    # Preservar prefixo/sufixo durante auto-complementação:
+    zstyle ':completion:*' expand prefix suffix
+    zstyle ':completion:*' completer _complete _prefix
+    zstyle ':completion:*' preserve-prefix '//[^ /]##/'
+    # Opção auto-cd deve ignorar o diretório corrente:
+    zstyle ':completion:*:cd:*' ignore-parents parent pwd
+    # Evitar entradas duplicadas para os comandos abaixo:
+    zstyle ':completion:*:rm:*' ignore-line 'yes'
+    zstyle ':completion:*:cp:*' ignore-line 'yes'
+    zstyle ':completion:*:mv:*' ignore-line 'yes'
+    # Auto-complementação case-sensitive:
+    zstyle ':completion:*:complete:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}'
+    # Auto-complementar a partir de curingas:
+    zstyle ':completion:*:complete-extended:*' matcher 'r:|[.,_-]=* r:|=*'
+    # Ignorar auto-complementação de funções internas do zsh:
+    zstyle ':completion:*:functions' ignored-patterns '_*'
+
+    # Aliases:
+    alias {q,Q}='bye'
+    alias {mv,MV}='nocorrect mv -i'
+    alias {cp,CP}='nocorrect cp -i'
+    alias {rm,RM}='nocorrect rm -i'
+    alias {mkdir,MKDIR}='nocorrect mkdir'
+    alias {du,DU}='du -kh --exclude=".*"'
+    alias {df,DF}='df -Th'
+    alias {free,FREE}='free -m'
+    alias {top,TOP}='top -u $USERNAME'
+    alias {vi,VI}='vim'
+    alias {vim,VIM}='vim'
+    alias {feh,FEH}='feh -x -T britney'
+    alias {sakura,SAKURA}='sakura 2>/dev/null'
+    alias {which,WHICH}='whence -s'
+    alias {distro,DISTRO}=\
+    'cat /etc/[A-Za-z]*[_-][rv]e[lr]* ; print "Kernel $(uname -r)"'
+    alias {cpu,CPU}='sed -u "s/\t// ; s/model name:// ; s/^[ \t]*//" \
+    <(sed -nu "/model name/p" <(cat /proc/cpuinfo))'
+    alias {xterm,XTERM}='xterm -T "Slackware_Linux" -ls -b 10 -bg black \
+    -fg green -cr white -fa Times -fs 11'
+    alias {aterm,ATERM}='aterm -title Slackware_Linux -ls -tr +sb -fg green \
+    -cr white -tint white -sh 30'
+    alias {lspci,LSPCI}='lspci | sed -u "s/^[0-9]*:[0-9]*.[0-9] *//g ; \
+    s/:/\n/g" | sed -u "s/^[ \t]/-> /"'
+
+    # Auto-completando entrada para comandos
+    # Uso: comando <TAB>
+    compctl -g '*.(doc|DOC|rtf|RTF)' + -g '*(-/)' abiword
+    compctl -g '*.(pdf|PDF|ps|PS)' + -g '*(-/)' xpdf gv
+    compctl -g '*.(htm|HTM|html|HTML)' + -g '*(-/)' firefox
+    compctl -g '*.(conf|CONF|txt|TXT|log|LOG)' + -g '*(-/)' cat jed joe
+    compctl -g '*.(jpg|JPG|png|PNG|gif|GIF)' + -g '*(-/)' feh display
+    compctl -g '*.(mp3|MP3|ogg|OGG|wav|WAV)' + -g '*(-/)' mpg321 ogg123 play
+
+    # Abrindo arquivos pela extensão:
+    alias -s ogg='ogg123 -d oss'
+    alias -s mp3='mpg321 -o oss'
+    alias -s png=display
+    alias -s jpg=display
+    alias -s doc=abiword
+    alias -s rtf=abiword
+    alias -s pdf=xpdf
+    alias -s txt=cat
+    al
+
+ias -s log=cat
+
+    # Encontrar determinado arquivo no diretório corrente:
+    achar() { print "\e[1mEncontrado em: $(ls **/$1)\e[m" }
+    # Corretor ortográfico via terminal (aspell pt):
+    corrigir() { which aspell && aspell -a <(print $1) || bye }
+
+    # Descompactando arquivo rapidamente:
+    # Uso: descom <arquivo>
+    descom() {
+    if [ -a $1 ]
+    then
+       case $1 {
+          *.[tT][aA][rR].[gG][zZ])    tar -xvzf $1 ;;
+          *.[gG][zZ])          gunzip    $1 ;;
+          *.[tT][aA][rR].[bB][zZ]2)   tar -jxvf $1 ;;
+          *.[bB][zZ]2)          bunzip2   $1 ;;
+          *.[tT][aA][rR])          tar -xvf  $1 ;;
+          *.[tT][gG][zZ])          gunzip    $1 ;;
+          *.[zZ][iI][pP])          unzip     $1 ;;
+          *) print "[$1] Arquivo não suportado."    ;;
+       }
+    else
+       print "Especifique um arquivo."
+    fi
+    }
+
+    # Jogando Tetris via terminal (use F1 para jogar):
+    if  [ -e $(which emacs) ]
+    then
+       autoload -U tetris
+       zle -N tetris
+       bindkey '^[OP' tetris
+    fi
+    # Fim
